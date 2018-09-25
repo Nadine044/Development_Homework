@@ -1,0 +1,26 @@
+<!--CONFIG FILE FOR THE GAME-->
+
+<config>
+  <app>
+    <title>This is a super title. Don't tell me. I know it.</title>
+    <organization>UPC</organization>
+  </app>
+
+  <renderer>
+    <vsync value = "false"/>
+  </renderer>
+
+  <window>
+    <width w="1024"/>
+    <height h="768"/>
+    <scale s="1"/>
+
+    <fullscreen fullScreen = "false"/>
+    <borderless borderless = "false"/>
+    <resizable resizable = "true"/>
+    <fullscreen_Window fullScreenWindow = "false"/>
+    
+  </window>
+  
+  
+ </config>
