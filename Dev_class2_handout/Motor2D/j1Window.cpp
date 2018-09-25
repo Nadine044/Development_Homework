@@ -34,31 +34,31 @@ bool j1Window::Awake(pugi::xml_node* node)
 		//Create window
 		Uint32 flags = SDL_WINDOW_SHOWN;
 
-		width = node->child("window").child("width").attribute("value").as_int();
-		height = node->child("window").child("height").attribute("value").as_int();
-		scale = node->child("window").child("scale").attribute("value").as_int();
+		width = node->child("window").child("width").attribute("w").as_int();
+		height = node->child("window").child("height").attribute("h").as_int();
+		scale = node->child("window").child("scale").attribute("s").as_int();
 
-		if (node->child("Window").child("fullscreen").attribute("value").as_bool())
+		if (node->child("window").child("fullscreen").attribute("fullScreen").as_bool())
 		{
 			flags |= SDL_WINDOW_FULLSCREEN;
 		}
 
-		if(node->child("Window").child("borderless").attribute("value").as_bool())
+		if(node->child("window").child("borderless").attribute("borderless").as_bool())
 		{
 			flags |= SDL_WINDOW_BORDERLESS;
 		}
 
-		if(node->child("Window").child("resizable").attribute("value").as_bool())
+		if(node->child("window").child("resizable").attribute("resizable").as_bool())
 		{
 			flags |= SDL_WINDOW_RESIZABLE;
 		}
 
-		if(node->child("Window").child("fullscreen_Window").attribute("value").as_bool())
+		if(node->child("window").child("fullscreen_Window").attribute("fullScreenWindow").as_bool())
 		{
 			flags |= SDL_WINDOW_FULLSCREEN_DESKTOP;
 		}
 
-		window = SDL_CreateWindow(node->child("Window").child_value("title"), SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, width, height, flags);
+		window = SDL_CreateWindow(node->child("window").child_value("title"), SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, width, height, flags);
 
 		if(window == NULL)
 		{
