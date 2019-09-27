@@ -28,8 +28,10 @@ public:
 	// Called before quitting
 	bool CleanUp();
 
-	bool Save(pugi::xml_node&) override;
 	bool Load(pugi::xml_node&) override;
+	bool Save(pugi::xml_node&) override;
+
+//	bool Load(pugi::xml_node&) override;
 
 	// Blit
 	void SetViewPort(const SDL_Rect& rect);

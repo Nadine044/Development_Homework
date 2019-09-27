@@ -122,80 +122,7 @@ bool j1App::Update()
 }
 
 
-//Save function
-bool j1App::Save(pugi::xml_node node)
-{
-	is_saved = true;
 
-		if (is_saved == true)
-		{
-			p2List_item<j1Module*>* item;
-			item = modules.start;
-
-			while (item != NULL && is_loaded == true)
-			{
-				is_loaded = item->data->Save(node);
-			}
-
-			LOG("The game has been saved correctly!!");
-		}
-
-		if (is_loaded == false)
-		{
-			LOG("Error saving the game!!");
-		}
-
-	return is_saved;
-}
-
-
-//Load function
-bool j1App::Load(pugi::xml_node node)
-{
-	is_loaded = true;
-
-		if (is_loaded == true)
-		{
-			p2List_item<j1Module*>* item;
-			item = modules.start;
-
-			while (item != NULL && is_loaded == true)
-			{
-				is_loaded = item->data->Load(node);
-			}
-			LOG("The game has been loaded correctly!!");
-		}
-
-		if (is_loaded == false)
-		{
-			LOG("Error loading the game!!");
-		}
-
-	return is_loaded;
-
-}
-
-
-// ---------------------------------------------
-bool j1App::LoadConfig()
-{
-	bool ret = true;
-
-	pugi::xml_parse_result result = config_file.load_file("config.xml");
-
-	if(result == NULL)
-	{
-		LOG("Could not load map xml file config.xml. pugi error: %s", result.description());
-		ret = false;
-	}
-	else
-	{
-		config = config_file.child("config");
-		app_config = config.child("app");
-	}
-
-	return ret;
-}
 
 // ---------------------------------------------
 void j1App::PrepareUpdate()
@@ -206,9 +133,54 @@ void j1App::PrepareUpdate()
 void j1App::FinishUpdate()
 {
 	// TODO 2: This is a good place to call load / Save functions
+	bool ret = true;
+	p2List_item<j1Module*>* item;
+	item = modules.start;
+	
+	if (save)
+	{
+		pugi::xml_document	save_and_load_file;
+		pugi::xml_node		save_and_load_node;
 
-	Save(config);
-	Load(config);
+		save_and_load_node = save_and_load_file.append_child("save");
+
+		while (item != NULL && ret == true)
+		{
+			ret = item->data->Save(save_and_load_node.append_child(item->data->name.GetString()));
+			item = item->next;
+		}
+
+		save = false;
+
+		save_and_load_file.save_file("saveandload.xml");
+	}
+
+	if (load)
+	{
+		pugi::xml_document	save_and_load_file;
+		pugi::xml_node		save_and_load_node;
+
+		pugi::xml_parse_result result = save_and_load_file.load_file("saveandload.xml");
+
+		if (result == NULL)
+		{
+			LOG("Could not load map xml file save_and_load.xml. pugi error: %s", result.description());
+			ret = false;
+			return;
+		}
+		else
+		{
+			save_and_load_node = save_and_load_file.child("save");
+		}
+
+		while (item != NULL && ret == true)
+		{
+			ret = item->data->Load(save_and_load_node.child(item->data->name.GetString()));
+			item = item->next;
+		}
+
+		load = false;
+	}
 
 }
 
@@ -320,6 +292,37 @@ const char* j1App::GetOrganization() const
 	return organization.GetString();
 }
 
+
+void j1App::ToSave()
+{
+	save = true;
+}
+
+void j1App::ToLoad()
+{
+	load = true;
+}
+
+// ---------------------------------------------
+bool j1App::LoadConfig()
+{
+	bool ret = true;
+
+	pugi::xml_parse_result result = config_file.load_file("config.xml");
+
+	if (result == NULL)
+	{
+		LOG("Could not load map xml file config.xml. pugi error: %s", result.description());
+		ret = false;
+	}
+	else
+	{
+		config = config_file.child("config");
+		app_config = config.child("app");
+	}
+
+	return ret;
+}
 
 // TODO 4: Create a simulation of the xml file to read 
 

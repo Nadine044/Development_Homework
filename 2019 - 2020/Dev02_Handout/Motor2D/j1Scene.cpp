@@ -58,10 +58,10 @@ bool j1Scene::Update(float dt)
 		App->render->camera.x += 1;
 
 	if (App->input->GetKey(SDL_SCANCODE_S) == KEY_DOWN)
-		App->Save(); //No necesita node, en la misma funcion de Save y Load ya se carga y guarda (dentro de la función), no hay que pasarle nada.
+		App->ToSave();
 
 	if (App->input->GetKey(SDL_SCANCODE_L) == KEY_DOWN)
-		App->Load();
+		App->ToLoad();
 
 	App->render->Blit(img, 0, 0);
 	return true;

@@ -104,5 +104,8 @@
   </ItemGroup>
   <ItemGroup>
     <Xml Include="..\Game\config.xml" />
+    <Xml Include="saveandload.xml">
+      <Filter>Desenvolupament  ========</Filter>
+    </Xml>
   </ItemGroup>
 </Project>
