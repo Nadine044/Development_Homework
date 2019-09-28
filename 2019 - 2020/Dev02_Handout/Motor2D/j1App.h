@@ -44,11 +44,18 @@ public:
 	const char* GetTitle() const;
 	const char* GetOrganization() const;
 
+	void ToSave();
+	void ToLoad();
+
+	bool LoadSaveAndLoadXML();
+
+
 	// TODO 1: Create methods to request save and load
 	// that can be called anytime
 
-	bool Save(pugi::xml_node);
-	bool Load(pugi::xml_node);
+	bool Save();
+
+	bool Load();
 
 private:
 
@@ -86,6 +93,8 @@ private:
 	uint				frames;
 	float				dt;
 	pugi::xml_document	config_file;
+	
+
 	pugi::xml_node		config;
 	pugi::xml_node		app_config;
 	int					argc;
@@ -94,8 +103,8 @@ private:
 	p2SString			title;
 	p2SString			organization;
 
-	bool				is_saved;
-	bool				is_loaded;
+	bool save = false;
+	bool load = false;
 
 };
 
