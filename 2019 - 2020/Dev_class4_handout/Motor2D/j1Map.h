@@ -73,8 +73,8 @@ private:
 public:
 
 	// TODO 1: Add your struct for map info as public for now
-	MapInfo			helloMap;
-	TilesetInfo		helloMapTileset;
+	MapInfo				helloMap;
+	TilesetInfo			helloMapTileset;
 
 private:
 

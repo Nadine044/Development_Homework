@@ -34,13 +34,11 @@ void j1Map::Draw()
 	// TODO 6: Iterate all tilesets and draw all their 
 	// images in 0,0 (you should have only one tileset for now)
 
-	SDL_Rect rect{ 0, 0, helloMapTileset.tilewidth, helloMapTileset.tileheight };
 	SDL_Texture* text = nullptr;
 	text = App->tex->Load(helloMapTileset.imageSource);
 
-	App->render->Blit(text, 0, 0, &rect);
-
-	//FIX THIS TODO
+	App->render->Blit(text, 0, 0);
+	
 }
 
 // Called before quitting
@@ -51,8 +49,10 @@ bool j1Map::CleanUp()
 	// TODO 2: Make sure you clean up any memory allocated
 	// from tilesets / map
 
-	delete[] &helloMap;
-	delete[] &helloMapTileset;
+	//delete[] &helloMap;
+	//delete[] &helloMapTileset;
+
+
 
 	map_file.reset();
 
