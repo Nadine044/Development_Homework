@@ -17,6 +17,18 @@ struct MapLayer
 	uint gid;
 	const char* dataEncoding = nullptr;
 
+	~MapLayer() {
+		RELEASE_ARRAY(gidData);
+	};
+
+	inline uint Get(int x, int y) const
+	{
+		int result = ((y * height) + x);
+		LOG("Result: %i", result);
+		return result;
+
+	}
+
 };
 
 
@@ -45,6 +57,24 @@ struct TileSet
 	int					num_tiles_height;
 	int					offset_x;
 	int					offset_y;
+
+	SDL_Rect GetRectFromID(const int id)
+	{
+		SDL_Rect ret;
+
+		int tileID = id - firstgid;
+
+		int width_with_margin = tile_width + spacing;
+		int height_with_margin = tile_height + spacing;
+
+		ret.x = (tileID % num_tiles_width) * width_with_margin + margin;
+		ret.y = (tileID / num_tiles_width) * height_with_margin + margin;
+		ret.w = tile_width;
+		ret.h = tile_height;
+
+		return ret;
+
+	}
 };
 
 enum MapTypes
@@ -67,6 +97,7 @@ struct MapData
 	// TODO 2: Add a list/array of layers to the map!
 
 	p2List<MapLayer*> layers;
+
 
 };
 
@@ -92,8 +123,19 @@ public:
 	// Load new map
 	bool Load(const char* path);
 
-	// TODO 8: Create a method that translates x,y coordinates from map positions to world positions
+	TileSet* GetTilesetFromID(int id) const;
 
+	// TODO 8: Create a method that translates x,y coordinates from map positions to world positions
+	
+	iPoint j1Map::MapToWorld(int x, int y) const
+	{
+		iPoint ret;
+
+		ret.x = x * data.tile_width;
+		ret.y = y * data.tile_height;
+
+		return ret;
+	}
 private:
 
 	bool LoadMap();

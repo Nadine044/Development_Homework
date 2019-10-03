@@ -32,6 +32,36 @@ void j1Map::Draw()
 		return;
 
 	// TODO 5: Prepare the loop to iterate all the tiles in a layer
+	
+	MapLayer* mapLayer = this->data.layers.start->data;
+	p2List_item<TileSet*>* Tilesets = nullptr;
+	p2List_item<MapLayer*>* layer_item = nullptr;
+
+
+	for (layer_item = data.layers.start; layer_item; layer_item = layer_item->next)
+	{
+		for (int y = 0; y < data.height; y++)
+		{
+			for (int x = 0; x < data.width; x++)
+			{
+				int id = layer_item->data->Get(x, y);
+				if (id > 0)
+				{
+					TileSet* tileset = GetTilesetFromID(id);
+					if (tileset != nullptr)
+					{
+						SDL_Rect rect = tileset->GetRectFromID(id);
+						iPoint position = MapToWorld(x, y);
+
+						App->render->Blit(tileset->texture, position.x, position.y, &rect);
+					}
+				}
+			}
+		}
+	}
+	
+	
+
 
 	// TODO 9: Complete the draw function
 
@@ -118,7 +148,7 @@ bool j1Map::Load(const char* file_name)
 	// Load layer info ----------------------------------------------
 
 	pugi::xml_node layers;
-	for (layers = map_file.child("map").child("layer") ; layers && ret ; layers.next_sibling("layer"))
+	for (layers = map_file.child("map").child("layer") ; layers && ret ; layers = layers.next_sibling("layer"))
 	{
 		MapLayer* layer = new MapLayer();
 
@@ -303,24 +333,50 @@ bool j1Map::LoadLayer(pugi::xml_node& node, MapLayer* layer)
 	layer->width = node.attribute("width").as_int();
 	layer->height = node.attribute("height").as_int();
 
-	if (node.child("data") == NULL)
+	pugi::xml_node layer_data = node.child("data");
+
+	if (layer_data == NULL)
 	{
+		LOG("Error parsing map xml file: Cannot find 'layer/data' tag.");
 		ret = false;
 		RELEASE(layer);
 	}
-
 	else
 	{
-		layer->gidData = new uint[layer->width * layer->height];
-		void * memset(void * ptr, int value, uint num);
-		memset(layer->gidData, 0, layer->width * layer->height);
+		layer->gidData = new uint[layer->width*layer->height];
+		memset(layer->gidData, 0, layer->width*layer->height);
 
 		int i = 0;
-		for (pugi::xml_node tile = node.child("data").child("tile"); tile; tile = tile.next_sibling("tile"))
+		for (pugi::xml_node tile = layer_data.child("tile"); tile; tile = tile.next_sibling("tile"))
 		{
-			layer->gidData[i++] = node.attribute("gid").as_int(0);
-		}
-	}	
+			layer->gidData[i++] = tile.attribute("gid").as_int(0);
 
-	return ret;	
+		}
+
+		return ret;
+	}
+
+}
+
+TileSet* j1Map::GetTilesetFromID(int id) const
+{
+	// TODO 3: Complete this method so we pick the right
+	// Tileset based on a tile id
+
+	p2List_item<TileSet*>* Tileset = nullptr;
+
+	for (Tileset = data.tilesets.start; Tileset; Tileset = Tileset->next) {
+
+		if (Tileset->next != nullptr)
+		{
+			if (Tileset->data->firstgid <= id && Tileset->next->data->firstgid > id) {
+
+				return Tileset->data;
+			}
+		}
+		else {
+			return Tileset->data;
+		}
+	}
+	return data.tilesets.start->data;
 }
